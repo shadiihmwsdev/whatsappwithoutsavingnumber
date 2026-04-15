@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Msg Whatsapp</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+        <link rel="shortcut icon" type="image/png" href="whatsappimg.png">
+    <script src="https://kit.fontawesome.com/7efa7cc256.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --wa-primary: #128c7e;
+            --wa-primary-dark: #0d6f63;
+            --wa-accent: #25d366;
+            --wa-surface: #ffffff;
+            --wa-bg: #f4fbf8;
+            --wa-text: #13231f;
+            --wa-muted: #5f736d;
+            --wa-border: rgba(18, 140, 126, 0.16);
+            --wa-shadow: 0 24px 60px rgba(18, 140, 126, 0.12);
+            --wa-header-glow: rgba(255, 255, 255, 0.08);
+            --wa-input-surface: #ffffff;
+            --wa-code-surface: rgba(18, 140, 126, 0.08);
+            --wa-code-focus: rgba(18, 140, 126, 0.12);
+            --wa-footer-overlay: rgba(19, 35, 31, 0.55);
+            --wa-toggle-bg: rgba(255, 255, 255, 0.16);
+            --wa-toggle-border: rgba(255, 255, 255, 0.24);
+            --wa-toggle-text: #ffffff;
+        }
+
+        body.dark-mode {
+            --wa-primary: #1aa392;
+            --wa-primary-dark: #0d6f63;
+            --wa-accent: #34df7b;
+            --wa-surface: rgba(17, 26, 31, 0.92);
+            --wa-bg: #081315;
+            --wa-text: #edf8f4;
+            --wa-muted: #9ab5ae;
+            --wa-border: rgba(52, 223, 123, 0.14);
+            --wa-shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
+            --wa-header-glow: rgba(255, 255, 255, 0.05);
+            --wa-input-surface: rgba(8, 18, 20, 0.88);
+            --wa-code-surface: rgba(26, 163, 146, 0.18);
+            --wa-code-focus: rgba(26, 163, 146, 0.28);
+            --wa-footer-overlay: rgba(6, 12, 14, 0.74);
+            --wa-toggle-bg: rgba(255, 255, 255, 0.08);
+            --wa-toggle-border: rgba(255, 255, 255, 0.14);
+            --wa-toggle-text: #f5fffb;
+        }
+
+        html,
+        body {
+            overflow-x: hidden;
+            margin-bottom: 0;
+            min-height: 100vh;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(37, 211, 102, 0.14), transparent 32%),
+                radial-gradient(circle at top right, rgba(18, 140, 126, 0.16), transparent 28%),
+                linear-gradient(180deg, #f7fcfa 0%, #eef8f4 100%);
+            font-family: 'Open Sans', sans-serif;
+            color: var(--wa-text);
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.dark-mode {
+            background:
+                radial-gradient(circle at top left, rgba(52, 223, 123, 0.12), transparent 30%),
+                radial-gradient(circle at top right, rgba(26, 163, 146, 0.16), transparent 24%),
+                linear-gradient(180deg, #081315 0%, #0d1d20 100%);
+        }
+
+        .coreDiv {
+            text-align: center;
+        }
+
+        .container {
+            position: relative;
+            min-height: calc(100vh - 20vh);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 15px;
+        }
+
+        .myDiv {
+            width: 100%;
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 40px 32px;
+            text-align: center;
+            background: var(--wa-surface);
+            border: 1px solid var(--wa-border);
+            border-radius: 28px;
+            box-shadow: var(--wa-shadow);
+            backdrop-filter: blur(10px);
+            animation: cardFloat 0.7s ease-out both;
+        }
+
+        .myDiv p {
+            font-size: 2rem;
+            color: var(--wa-text);
+            font-weight: 700;
+            margin: 14px 0 10px;
+        }
+
+        .errorReport {
+            margin: 0 auto 14px;
+            padding: 10px 14px;
+            max-width: 420px;
+            border-radius: 12px;
+            background: rgba(179, 10, 44, 0.08);
+        }
+
+        #headerDiv {
+            background: linear-gradient(90deg, var(--wa-primary-dark) 0%, var(--wa-primary) 100%);
+            min-height: 10vh;
+            box-shadow: 0 10px 30px rgba(18, 140, 126, 0.18);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 14px 18px;
+        }
+
+        #headerDiv::after {
+            content: "";
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            top: -90px;
+            right: -20px;
+            border-radius: 50%;
+            background: var(--wa-header-glow);
+            filter: blur(4px);
+        }
+
+        #themeToggle {
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 116px;
+            padding: 10px 14px;
+            border: 1px solid var(--wa-toggle-border);
+            border-radius: 999px;
+            background: var(--wa-toggle-bg);
+            color: var(--wa-toggle-text);
+            font-size: 1.35rem;
+            font-weight: 700;
+            line-height: 1;
+            backdrop-filter: blur(8px);
+            transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        #themeToggle:hover,
+        #themeToggle:focus {
+            color: var(--wa-toggle-text);
+            background: rgba(255, 255, 255, 0.22);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+            outline: none;
+        }
+
+        .helperText {
+            max-width: 480px;
+            margin: 0 auto 28px;
+            color: var(--wa-muted);
+            font-size: 1.5rem;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        #inputDiv {
+            float: none;
+            display: flex;
+            align-items: stretch;
+            overflow: hidden;
+            margin: 0 auto;
+            padding: 8px;
+            background: var(--wa-input-surface);
+            border: 1px solid var(--wa-border);
+            border-radius: 18px;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        #inputDiv .input-group-addon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 74px;
+            height: 56px;
+            border: 0;
+            border-radius: 12px;
+            background: rgba(18, 140, 126, 0.08);
+            color: var(--wa-primary-dark);
+            font-size: 1.8rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        #countryCode.form-control {
+            width: 92px;
+            min-width: 92px;
+            height: 56px;
+            border: 0;
+            box-shadow: none;
+            font-size: 1.8rem;
+            padding: 16px 12px;
+            color: var(--wa-primary-dark);
+            background: var(--wa-code-surface);
+            text-align: center;
+            font-weight: 700;
+            border-radius: 12px;
+        }
+
+        #countryCode.form-control::placeholder {
+            color: rgba(13, 111, 99, 0.55);
+        }
+
+        #countryCode.form-control:focus {
+            box-shadow: none;
+            background: var(--wa-code-focus);
+        }
+
+        #phoneNum.form-control {
+            height: 56px;
+            border: 0;
+            box-shadow: none;
+            font-size: 1.8rem;
+            padding: 16px 18px;
+            color: var(--wa-text);
+            background: transparent;
+        }
+
+        #phoneNum.form-control::placeholder {
+            color: #93a5a0;
+        }
+
+        #phoneNum.form-control:focus {
+            box-shadow: none;
+        }
+
+        #inputDiv:focus-within {
+            border-color: rgba(18, 140, 126, 0.32);
+            box-shadow: 0 14px 32px rgba(18, 140, 126, 0.12);
+            transform: translateY(-1px);
+        }
+
+        #btnSendMsg {
+            margin-top: 18px;
+            min-width: 220px;
+            padding: 14px 28px;
+            border: 0;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--wa-primary) 0%, var(--wa-accent) 100%);
+            color: #fff;
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            box-shadow: 0 18px 30px rgba(18, 140, 126, 0.24);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        }
+
+        #btnSendMsg:hover,
+        #btnSendMsg:focus {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 22px 34px rgba(18, 140, 126, 0.28);
+            filter: brightness(1.02);
+            outline: none;
+        }
+
+        #btnSendMsg:active {
+            transform: translateY(0);
+            box-shadow: 0 12px 22px rgba(18, 140, 126, 0.22);
+        }
+
+        #footerDiv {
+            background-image: url('whatsapp1.jpg');
+            background-position: center;
+            background-size: cover;
+            min-height: 10vh;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        #footerDiv::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: var(--wa-footer-overlay);
+        }
+
+        #footerDiv p {
+            position: relative;
+            color: #fff;
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .llc {
+            opacity: 0.5;
+        }
+
+        main {
+            min-height: calc(100vh - 20vh);
+            display: flex;
+            flex: 1 0 auto;
+        }
+
+        .fa-whatsapp {
+            color: var(--wa-primary);
+            filter: drop-shadow(0 14px 24px rgba(18, 140, 126, 0.18));
+        }
+
+        @keyframes cardFloat {
+            from {
+                opacity: 0;
+                transform: translateY(18px) scale(0.985);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @media screen and (max-width: 767px) {
+            html,
+            body {
+                height: 100dvh;
+                min-height: 100dvh;
+                overflow: hidden;
+            }
+
+            .myDiv {
+                padding: 24px 16px;
+                border-radius: 22px;
+            }
+
+            .myDiv p {
+                font-size: 1.6rem;
+                margin: 12px 0 8px;
+            }
+
+            .helperText {
+                font-size: 1.3rem;
+                line-height: 1.45;
+                margin-bottom: 20px;
+            }
+
+            #inputDiv {
+                padding: 6px;
+                border-radius: 16px;
+            }
+
+            #inputDiv .input-group-addon {
+                min-width: 62px;
+                height: 50px;
+                font-size: 1.6rem;
+            }
+
+            #countryCode.form-control {
+                width: 78px;
+                min-width: 78px;
+                height: 50px;
+                font-size: 1.55rem;
+                padding: 14px 8px;
+            }
+
+            #phoneNum.form-control {
+                height: 50px;
+                font-size: 1.6rem;
+                padding: 14px 12px;
+            }
+
+            #btnSendMsg {
+                width: 75%;
+                min-width: 0;
+                margin-top: 14px;
+                padding: 14px 28px;
+                font-size: 1.6rem;
+            }
+
+            #headerDiv {
+                min-height: 72px;
+                padding: 12px 14px;
+            }
+
+            main {
+                min-height: auto;
+                height: calc(100dvh - 72px - 64px);
+            }
+
+            .container {
+                min-height: 100%;
+                padding: 12px;
+            }
+
+            #footerDiv {
+                min-height: 64px;
+            }
+
+            .errorReport {
+                margin-bottom: 10px;
+                padding: 8px 12px;
+            }
+        }
+
+        @media screen and (max-width: 479px) {
+            #headerDiv {
+                min-height: 64px;
+            }
+
+            #themeToggle {
+                min-width: 102px;
+                padding: 9px 12px;
+                font-size: 1.25rem;
+            }
+
+            main {
+                height: calc(100dvh - 64px - 56px);
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            .myDiv {
+                padding: 20px 14px 18px;
+                border-radius: 20px;
+            }
+
+            .fa-whatsapp {
+                font-size: 4.2em;
+            }
+
+            .myDiv p {
+                font-size: 1.45rem;
+            }
+
+            .helperText {
+                font-size: 1.2rem;
+                margin-bottom: 16px;
+            }
+
+            #inputDiv .input-group-addon {
+                min-width: 56px;
+                height: 46px;
+                font-size: 1.45rem;
+                border-radius: 10px;
+            }
+
+            #countryCode.form-control {
+                width: 70px;
+                min-width: 70px;
+                height: 46px;
+                font-size: 1.4rem;
+                padding: 12px 6px;
+                border-radius: 10px;
+            }
+
+            #phoneNum.form-control {
+                height: 46px;
+                font-size: 1.45rem;
+                padding: 12px 10px;
+            }
+
+            #btnSendMsg {
+                padding: 14px 24px;
+                font-size: 1.55rem;
+            }
+
+            #footerDiv {
+                min-height: 56px;
+            }
+
+            #footerDiv p {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+
+<body>   
+    <nav id="headerDiv">
+        <button id="themeToggle" type="button" class="btn btn-default" aria-label="Toggle dark mode">
+            <i class="fa fa-moon-o" aria-hidden="true"></i>
+            <span class="themeLabel">Dark</span>
+        </button>
+    </nav>
+    <main>
+    <div class="container">
+
+        <div class="row">
+            <div class="myDiv">
+                <span><i class="fa fa-whatsapp fa-5x" aria-hidden="true"></i></span>
+                <p class="errorReport" style="display: none; color: rgb(179, 10, 44); font-weight: 800; font-size: medium;"></p>
+                <p>Whatsapp without saving number</p>
+                <div class="helperText">Enter a WhatsApp number and jump straight into chat without adding it to your contacts.</div>
+                <div class="row coreDiv">
+                    <div id="inputDiv"
+                        class="col-xs-10 col-xs-offset-1 col-md-8 col-md-offset-2 input-group input-group-lg">
+                        <input class="form-control" type="tel" id="countryCode" maxlength="4" value="254"
+                            placeholder="254" required>
+                        <input class="form-control" type="tel" id="phoneNum" maxlength="15"
+                            placeholder="e.g. 700 000 000" required>
+                    </div>
+                    <button id="btnSendMsg" type="button" class="btn btn-default">Send Message</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+    <footer id="footerDiv">
+        <p>&copy;2021-<span id="year"></span> By <span class="llc">&copy;ShadiihSolutions</span></p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+    <script>
+        function applyTheme(theme) {
+            var isDark = theme === "dark";
+
+            $("body").toggleClass("dark-mode", isDark);
+            $("#themeToggle")
+                .attr("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode")
+                .find("i")
+                .attr("class", isDark ? "fa fa-sun-o" : "fa fa-moon-o");
+            $("#themeToggle .themeLabel").text(isDark ? "Light" : "Dark");
+
+            try {
+                localStorage.setItem("themeMode", isDark ? "dark" : "light");
+            } catch (error) {
+            }
+        }
+
+        function getSavedTheme() {
+            try {
+                return localStorage.getItem("themeMode");
+            } catch (error) {
+                return null;
+            }
+        }
+
+        applyTheme(getSavedTheme() || "light");
+
+        var countryRules = {
+            "1": { name: "US/Canada", min: 10, max: 10 },
+            "20": { name: "Egypt", min: 10, max: 10 },
+            "27": { name: "South Africa", min: 9, max: 9 },
+            "44": { name: "United Kingdom", min: 9, max: 10 },
+            "91": { name: "India", min: 10, max: 10 },
+            "211": { name: "South Sudan", min: 9, max: 9 },
+            "233": { name: "Ghana", min: 9, max: 9 },
+            "234": { name: "Nigeria", min: 10, max: 10 },
+            "250": { name: "Rwanda", min: 9, max: 9 },
+            "251": { name: "Ethiopia", min: 9, max: 9 },
+            "254": { name: "Kenya", min: 9, max: 9 },
+            "255": { name: "Tanzania", min: 9, max: 9 },
+            "256": { name: "Uganda", min: 9, max: 9 },
+            "257": { name: "Burundi", min: 8, max: 8 },
+            "966": { name: "Saudi Arabia", min: 9, max: 9 },
+            "971": { name: "United Arab Emirates", min: 9, max: 9 }
+        };
+
+        function showError(message, fieldSelector) {
+            $(".errorReport").text(message).show();
+
+            if (fieldSelector) {
+                $(fieldSelector).focus();
+            }
+        }
+
+        function clearError() {
+            if ($(".errorReport").is(":visible")) {
+                $(".errorReport").hide();
+            }
+        }
+
+        $("#countryCode, #phoneNum").on("input", function () {
+            $(this).val($(this).val().replace(/\D/g, ""));
+            clearError();
+        });
+
+        $("#themeToggle").click(function () {
+            applyTheme($("body").hasClass("dark-mode") ? "light" : "dark");
+        });
+
+        $("#btnSendMsg").click(function () {
+            var countryCode = $("#countryCode").val().replace(/\D/g, "");
+            var phoneNum = $("#phoneNum").val().replace(/\D/g, "");
+            var countryRule;
+
+            while (countryCode.charAt(0) === "0") countryCode = countryCode.substring(1);
+            while (phoneNum.charAt(0) === "0") phoneNum = phoneNum.substring(1);
+
+            if (!countryCode.length) {
+                showError("Oops! Enter a valid country code.", "#countryCode");
+                return;
+            }
+
+            if (!countryRules[countryCode]) {
+                showError("Oops! That country code is not supported yet.", "#countryCode");
+                return;
+            }
+
+            if (!phoneNum.length) {
+                showError("Oops! Enter a valid phone number.", "#phoneNum");
+                return;
+            }
+
+            if (phoneNum.indexOf(countryCode) === 0) {
+                showError("Oops! Enter the phone number without the country code.", "#phoneNum");
+                return;
+            }
+
+            countryRule = countryRules[countryCode];
+
+            if (phoneNum.length < countryRule.min || phoneNum.length > countryRule.max) {
+                showError(
+                    "Oops! " + countryRule.name + " numbers should have " +
+                    (countryRule.min === countryRule.max
+                        ? countryRule.min + " digits"
+                        : countryRule.min + "-" + countryRule.max + " digits") +
+                    " after the country code.",
+                    "#phoneNum"
+                );
+                return;
+            }
+
+            clearError();
+            var url = "https://api.whatsapp.com/send?phone=" + countryCode + phoneNum;
+            window.open(url, '_blank')
+        });
+
+        $("#countryCode, #phoneNum").on("keydown", function (event) {
+            if (event.key === "Enter") {
+                $("#btnSendMsg").trigger("click");
+            }
+        });
+
+        $("#year").text(new Date().getFullYear())
+    </script>
+</body>
+
+</html>
